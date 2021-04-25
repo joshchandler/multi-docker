@@ -9,6 +9,7 @@ script:
   - docker run joshchandler/react-test npm test -- --coverage
 
 after_success:
+  - echo HELLO
   - docker build -t joshchandler/multi-client ./client
   - docker build -t joshchandler/multi-nginx ./nginx
   - docker build -t joshchandler/multi-server ./server
