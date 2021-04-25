@@ -1,0 +1,21 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t joshchandler/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run joshchandler/react-test npm run test -- --coverage
+
+after_success:
+  - docker build -t joshchandler/multi-client ./client
+  - docker build -t joshchandler/multi-nginx ./nginx
+  - docker build -t joshchandler/multi-server ./server
+  - docker build -t joshchandler/multi-worker ./worker
+  - docker login
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push joshchandler/multi-client
+  - docker push joshchandler/multi-nginx
+  - docker push joshchandler/multi-server
+  - docker push joshchandler/multi-worker
