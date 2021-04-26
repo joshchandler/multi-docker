@@ -9,7 +9,6 @@ script:
   - docker run -e CI=true joshchandler/react-test npm test -- --coverage
 
 after_success:
-  - echo HELLO
   - docker build -t joshchandler/multi-client ./client
   - docker build -t joshchandler/multi-nginx ./nginx
   - docker build -t joshchandler/multi-server ./server
@@ -19,3 +18,15 @@ after_success:
   - docker push joshchandler/multi-nginx
   - docker push joshchandler/multi-server
   - docker push joshchandler/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-1
+  app: multi-docker
+  env: Multidocker-env
+  bucket_name: elasticbeanstalk-us-east-1-632249364817
+  bucket_path: multi-docker
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
